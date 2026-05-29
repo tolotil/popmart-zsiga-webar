@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="104" y="128" width="692" height="612" rx="40" fill="#fbf6ef"/>
+    <rect x="104" y="128" width="692" height="612" rx="40" fill="none" stroke="#2d2522" stroke-width="8"/>
+  </g>
+  <rect x="140" y="160" width="164" height="52" rx="4" fill="#f20519"/>
+  <text x="222" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">POP MART</text>
+  <text x="140" y="256" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="54" font-weight="700" fill="#2d2522">刺刺边界卡</text>
+  <text x="140" y="334" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="52" font-weight="700" fill="#7f5537">刺不是攻击</text>
+  <text x="140" y="398" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="52" font-weight="700" fill="#7f5537">是保护自己的边界</text>
+  <path d="M140 438 H760" stroke="#7f5537" stroke-width="4" stroke-dasharray="14 14" opacity="0.4"/>
+
+  <rect x="140" y="476" width="620" height="92" rx="26" fill="#fff3ce" stroke="#a7864d" stroke-width="4"/>
+  <text x="450" y="530" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="32" font-weight="700" fill="#2d2522">Zsiga 的刺，是不委屈自己，也不伤害别人</text>
+
+  <rect x="172" y="602" width="154" height="50" rx="25" fill="#2d2522"/>
+  <text x="249" y="635" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="26" font-weight="700" fill="#ffffff">不讨好</text>
+  <rect x="374" y="602" width="154" height="50" rx="25" fill="#2d2522"/>
+  <text x="451" y="635" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="26" font-weight="700" fill="#ffffff">敢表达</text>
+  <rect x="576" y="602" width="154" height="50" rx="25" fill="#2d2522"/>
+  <text x="653" y="635" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="26" font-weight="700" fill="#ffffff">有边界</text>
+
+  <text x="450" y="698" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" fill="#64574f">新学期可以慢一点，也可以按自己的方式长大</text>
+</svg>

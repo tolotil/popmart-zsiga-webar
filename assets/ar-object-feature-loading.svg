@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="124" y="132" width="652" height="616" rx="40" fill="#fff2b6"/>
+    <rect x="124" y="132" width="652" height="616" rx="40" fill="none" stroke="#2d2522" stroke-width="8"/>
+  </g>
+  <rect x="162" y="168" width="164" height="52" rx="4" fill="#f20519"/>
+  <text x="244" y="203" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">POP MART</text>
+  <text x="450" y="308" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#2d2522">正在为你抽取能量卡</text>
+  <text x="450" y="414" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="88" font-weight="700" fill="#d46a3b">抽取中...</text>
+  <text x="450" y="492" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="32" fill="#2d2522">把这一刻交给 Zsiga</text>
+  <text x="450" y="536" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="32" fill="#2d2522">下一张开学情绪卡，正在生成</text>
+  <circle cx="372" cy="622" r="20" fill="#2d2522"/>
+  <circle cx="450" cy="622" r="20" fill="#2d2522" opacity="0.72"/>
+  <circle cx="528" cy="622" r="20" fill="#2d2522" opacity="0.44"/>
+</svg>

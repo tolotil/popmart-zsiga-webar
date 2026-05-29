@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.16"/>
+    </filter>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f2e7"/>
+      <stop offset="100%" stop-color="#f1e8db"/>
+    </linearGradient>
+    <linearGradient id="boxFront" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffdf7f"/>
+      <stop offset="100%" stop-color="#f3bf57"/>
+    </linearGradient>
+    <linearGradient id="boxSide" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f6c463"/>
+      <stop offset="100%" stop-color="#dfa043"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="116" y="118" width="668" height="640" rx="42" fill="url(#card)"/>
+    <rect x="116" y="118" width="668" height="640" rx="42" fill="none" stroke="#2d2522" stroke-width="8"/>
+  </g>
+
+  <rect x="152" y="150" width="164" height="52" rx="4" fill="#f20519"/>
+  <text x="234" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">POP MART</text>
+  <text x="152" y="238" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" fill="#6c6259">Zsiga 开学季 AR 情绪盲盒</text>
+  <text x="152" y="334" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="88" font-weight="700" fill="#7f5537">生来自由</text>
+  <text x="152" y="420" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="88" font-weight="700" fill="#7f5537">倔强生长</text>
+
+  <text x="560" y="276" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-style="italic" fill="#cb532d">Zsiga</text>
+  <circle cx="590" cy="474" r="132" fill="#fde188"/>
+  <circle cx="590" cy="474" r="146" fill="none" stroke="#fde188" stroke-width="10" opacity="0.66"/>
+  <circle cx="590" cy="474" r="158" fill="none" stroke="#fde188" stroke-width="4" opacity="0.45"/>
+
+  <path d="M524 418 592 388 660 418 660 502 592 540 524 502Z" fill="url(#boxFront)" stroke="#3a2d25" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M524 418 592 454 660 418" fill="none" stroke="#3a2d25" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M592 388 612 346 682 382 660 418Z" fill="#ffe8a6" stroke="#3a2d25" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M592 388 572 346 502 382 524 418Z" fill="#ffe8a6" stroke="#3a2d25" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M592 454 V540" stroke="#3a2d25" stroke-width="7" stroke-linecap="round"/>
+  <path d="M612 338 624 308" stroke="#3a2d25" stroke-width="6" stroke-linecap="round"/>
+  <path d="M664 372 692 350" stroke="#3a2d25" stroke-width="6" stroke-linecap="round"/>
+  <path d="M514 372 486 350" stroke="#3a2d25" stroke-width="6" stroke-linecap="round"/>
+  <path d="M570 324 554 296" stroke="#3a2d25" stroke-width="6" stroke-linecap="round"/>
+
+  <path d="M212 592 250 556 264 602 312 610 272 638 282 686 240 662 198 686 206 638 168 610Z" fill="#fedc7a" stroke="#3a2d25" stroke-width="6"/>
+  <path d="M684 592 706 570 716 598 746 604 722 624 726 652 702 638 678 652 682 624 658 606Z" fill="#fedc7a" stroke="#3a2d25" stroke-width="6"/>
+
+  <rect x="484" y="578" width="92" height="38" rx="19" fill="#2d2522"/>
+  <text x="530" y="604" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#ffffff">自由</text>
+  <rect x="588" y="578" width="112" height="38" rx="19" fill="#2d2522"/>
+  <text x="644" y="604" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#ffffff">倔强</text>
+
+  <rect x="152" y="678" width="592" height="48" rx="24" fill="#2d2522"/>
+  <text x="448" y="710" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="26" font-weight="700" fill="#ffffff">对准官方海报，开启你的开学情绪开盒</text>
+</svg>

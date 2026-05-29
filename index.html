@@ -1,0 +1,1428 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>POP MART | Zsiga 开学季 AR 情绪盲盒</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #ffffff;
+      --muted: rgba(255, 255, 255, 0.72);
+      --panel: rgba(10, 17, 18, 0.72);
+      --line: rgba(255, 255, 255, 0.18);
+      --green: #00c48c;
+      --yellow: #ffe45e;
+      --red: #ff4f7b;
+      --cyan: #63d8ff;
+      --bg: #101015;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      min-height: 100svh;
+    }
+
+    .preview-stage {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background:
+        linear-gradient(120deg, rgba(255, 79, 123, 0.32), transparent 42%),
+        linear-gradient(240deg, rgba(99, 216, 255, 0.26), transparent 48%),
+        #101015;
+    }
+
+    .camera-frame {
+      position: relative;
+      width: min(92vw, 520px);
+      aspect-ratio: 9 / 14;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #191925;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+    }
+
+    .fake-camera {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        #252537;
+      background-size: 34px 34px;
+      opacity: 0.78;
+    }
+
+    .marker-preview {
+      position: absolute;
+      left: 11%;
+      right: 11%;
+      top: 18%;
+      aspect-ratio: 1 / 1.25;
+      overflow: hidden;
+      transform: perspective(820px) rotateX(8deg) rotateZ(-2deg);
+      background: #f0ece6;
+      border: 2px solid rgba(255, 255, 255, 0.48);
+    }
+
+    .marker-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .marker-preview-badge {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      padding: 10px 12px;
+      background: rgba(12, 12, 16, 0.76);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .floating-ar {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      width: 62%;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 22px 28px rgba(0, 0, 0, 0.35));
+      transition: opacity 0.22s ease, filter 0.22s ease;
+      animation: float 3.2s ease-in-out infinite;
+    }
+
+    .floating-ar.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .floating-ar.is-refreshing {
+      opacity: 0.18;
+      filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.2));
+    }
+
+    @keyframes float {
+      0%,
+      100% {
+        transform: translate(-50%, -52%);
+      }
+      50% {
+        transform: translate(-50%, -47%);
+      }
+    }
+
+    .top-hint {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      top: calc(12px + env(safe-area-inset-top));
+      z-index: 10;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      font-size: 14px;
+      line-height: 1.55;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: var(--yellow);
+    }
+
+    .status-dot.is-found {
+      background: var(--green);
+    }
+
+    .status-dot.is-lost {
+      background: var(--red);
+    }
+
+    .control-panel {
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 20;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .mode-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      min-height: 44px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.is-active {
+      border-color: transparent;
+      background: var(--yellow);
+      color: #191919;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .result-panel {
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .result-panel h1 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .result-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .action-row {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .action-row.is-visible {
+      display: block;
+    }
+
+    .story-panel {
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        linear-gradient(140deg, rgba(255, 79, 123, 0.12), transparent 44%),
+        rgba(255, 255, 255, 0.05);
+    }
+
+    .story-panel__hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .story-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .story-trigger {
+      min-height: 42px;
+      padding: 0 8px;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 13px;
+    }
+
+    .story-trigger.is-picked {
+      border-color: transparent;
+      background: linear-gradient(90deg, rgba(255, 79, 123, 0.92), rgba(255, 157, 116, 0.92));
+      color: #ffffff;
+    }
+
+    .story-quote {
+      margin: 10px 0 0;
+      color: var(--yellow);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .primary-action {
+      width: 100%;
+      min-height: 48px;
+      border-color: transparent;
+      background: linear-gradient(90deg, #ffe45e, #ffcd47);
+      color: #191919;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    button.is-locked {
+      border-style: dashed;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .brand-lockup img {
+      display: block;
+      width: 84px;
+      height: auto;
+      border-radius: 2px;
+    }
+
+    .brand-lockup span {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .marker-link {
+      color: var(--yellow);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .ar-scene {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    body.is-reward-open .top-hint {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-12px);
+    }
+
+    body.is-reward-open .control-panel {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(18px);
+    }
+
+    body.is-reward-open .preview-stage,
+    body.is-reward-open .ar-scene {
+      display: none;
+    }
+
+    body.has-real-ar .preview-stage {
+      display: none;
+    }
+
+    body:not(.has-real-ar) .ar-scene {
+      display: none;
+    }
+
+    .reward-sheet {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      align-items: center;
+      padding: 16px 12px;
+      background:
+        radial-gradient(circle at top, rgba(255, 228, 94, 0.08), transparent 28%),
+        linear-gradient(180deg, rgba(10, 10, 16, 0.98), rgba(6, 6, 10, 0.98));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .reward-sheet.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .reward-sheet__panel {
+      position: relative;
+      width: min(100%, 620px);
+      margin: 0 auto;
+      max-height: min(92svh, 760px);
+      overflow-y: auto;
+      padding: 20px 18px 18px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 228, 94, 0.16), transparent 35%),
+        linear-gradient(220deg, rgba(255, 79, 123, 0.08), transparent 56%),
+        rgba(16, 16, 21, 0.96);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.32);
+      transform: translateY(22px);
+      transition: transform 0.24s ease;
+    }
+
+    .reward-sheet.is-visible .reward-sheet__panel {
+      transform: translateY(0);
+    }
+
+    .sheet-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 38px;
+      min-height: 38px;
+      border-color: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .sheet-kicker {
+      margin: 0 0 6px;
+      color: var(--yellow);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .sheet-title {
+      margin: 0;
+      padding-right: 40px;
+      font-size: 22px;
+      line-height: 1.3;
+    }
+
+    .sheet-text {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .reward-card {
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      background:
+        linear-gradient(140deg, rgba(255, 79, 123, 0.14), transparent 48%),
+        linear-gradient(240deg, rgba(99, 216, 255, 0.1), transparent 54%),
+        rgba(255, 255, 255, 0.05);
+    }
+
+    .reward-chip {
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .reward-energy {
+      margin: 10px 0 0;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .reward-copy {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .reward-attitude {
+      margin: 10px 0 0;
+      color: #ffffff;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .entry-card {
+      margin-top: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255, 228, 94, 0.14), transparent 32%),
+        linear-gradient(220deg, rgba(99, 216, 255, 0.12), transparent 60%),
+        rgba(255, 255, 255, 0.05);
+    }
+
+    .entry-kicker {
+      margin: 0;
+      color: var(--yellow);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .entry-title {
+      margin: 8px 0 0;
+      font-size: 20px;
+      line-height: 1.3;
+    }
+
+    .entry-text {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    .entry-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .entry-tags span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sheet-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .secondary-action {
+      min-height: 48px;
+      border-color: rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .tertiary-action {
+      width: 100%;
+      min-height: 42px;
+      margin-top: 10px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sheet-feedback {
+      min-height: 20px;
+      margin: 12px 0 0;
+      color: var(--yellow);
+      font-size: 13px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .sheet-note {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 390px) {
+      .top-hint,
+      .result-panel p {
+        font-size: 13px;
+      }
+
+      .result-panel h1 {
+        font-size: 16px;
+      }
+
+      .sheet-title,
+      .reward-energy,
+      .entry-title {
+        font-size: 20px;
+      }
+
+      .story-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .sheet-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-hint" id="hint">
+    <span class="status-dot" id="statusDot"></span>
+    <span id="statusText">当前是预览模式：先看清“AR 情绪盲盒怎么玩”。生成 <code>targets.mind</code> 后，这里会切换成真实摄像头识别。</span>
+    <a class="marker-link" href="./assets/marker-card.png" target="_blank" rel="noreferrer">打开官方识别海报</a>
+  </div>
+
+  <main class="preview-stage" aria-label="WebAR preview">
+    <section class="camera-frame">
+      <div class="fake-camera"></div>
+      <div class="marker-preview">
+        <img src="./assets/marker-card.png?v=20260529a" alt="泡泡玛特 Zsiga 官方竖版识别海报" />
+        <span class="marker-preview-badge">正式识别图：泡泡玛特 Zsiga 官方竖版海报</span>
+      </div>
+      <img class="floating-ar is-hidden" id="previewObject" alt="AR content preview" />
+    </section>
+  </main>
+
+  <a-scene
+    class="ar-scene"
+    mindar-image="imageTargetSrc: ./assets/targets.mind; autoStart: true;"
+    color-space="sRGB"
+    renderer="colorManagement: true, physicallyCorrectLights"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+    <a-assets>
+      <img id="arMainClosed" src="./assets/ar-object-main-closed.svg?v=20260529f" />
+      <img id="arMain" src="./assets/ar-object-main.svg?v=20260529f" />
+      <img id="arMainOfficial01" src="./assets/openbox-results/01.png?v=20260529m" />
+      <img id="arMainOfficial02" src="./assets/openbox-results/02.png?v=20260529m" />
+      <img id="arMainOfficial03" src="./assets/openbox-results/03.png?v=20260529m" />
+      <img id="arMainOfficial04" src="./assets/openbox-results/04.png?v=20260529m" />
+      <img id="arMainOfficial05" src="./assets/openbox-results/05.png?v=20260529m" />
+      <img id="arMainOfficial06" src="./assets/openbox-results/06.png?v=20260529m" />
+      <img id="arMainOfficial07" src="./assets/openbox-results/07.png?v=20260529m" />
+      <img id="arStory" src="./assets/ar-object-story.svg?v=20260529e" />
+      <img id="arStorySlow" src="./assets/ar-object-story-slow.svg?v=20260529g" />
+      <img id="arStorySpace" src="./assets/ar-object-story-space.svg?v=20260529g" />
+      <img id="arStoryOwn" src="./assets/ar-object-story-own.svg?v=20260529g" />
+      <img id="arFeatureLoading" src="./assets/ar-object-feature-loading.svg?v=20260529e" />
+      <img id="arFeatureGrow" src="./assets/ar-object-feature-grow.svg?v=20260529f" />
+      <img id="arFeatureSelf" src="./assets/ar-object-feature-self.svg?v=20260529f" />
+      <img id="arFeatureGlow" src="./assets/ar-object-feature-glow.svg?v=20260529f" />
+      <img id="arFeatureRush" src="./assets/ar-object-feature-rush.svg?v=20260529f" />
+      <img id="arFeatureSocial" src="./assets/ar-object-feature-social.svg?v=20260529f" />
+      <img id="arFeatureCurious" src="./assets/ar-object-feature-curious.svg?v=20260529f" />
+      <img id="arFeatureStep" src="./assets/ar-object-feature-step.svg?v=20260529f" />
+      <img id="arFeatureSpace" src="./assets/ar-object-feature-space.svg?v=20260529f" />
+      <img id="arFeatureEnter" src="./assets/ar-object-feature-enter.svg?v=20260529f" />
+      <img id="arReward" src="./assets/ar-object-reward.svg?v=20260529e" />
+      <img id="arMainBack" src="./assets/ar-layer-main-back.svg?v=20260529e" />
+      <img id="arMainFrontClosed" src="./assets/ar-layer-main-front-closed.svg?v=20260529f" />
+      <img id="arMainFront" src="./assets/ar-layer-main-front.svg?v=20260529e" />
+      <img id="arStoryBack" src="./assets/ar-layer-story-back.svg?v=20260529e" />
+      <img id="arStoryFront" src="./assets/ar-layer-story-front.svg?v=20260529h" />
+      <img id="arStoryFrontSlow" src="./assets/ar-layer-story-front-slow.svg?v=20260529i" />
+      <img id="arStoryFrontSpace" src="./assets/ar-layer-story-front-space.svg?v=20260529i" />
+      <img id="arStoryFrontOwn" src="./assets/ar-layer-story-front-own.svg?v=20260529j" />
+      <img id="arFeatureBack" src="./assets/ar-layer-feature-back.svg?v=20260529e" />
+      <img id="arFeatureFrontLoading" src="./assets/ar-layer-feature-front-loading.svg?v=20260529e" />
+      <img id="arFeatureFront" src="./assets/ar-layer-feature-front.svg?v=20260529f" />
+      <img id="arRewardBack" src="./assets/ar-layer-reward-back.svg?v=20260529e" />
+      <img id="arRewardFront" src="./assets/ar-layer-reward-front.svg?v=20260529e" />
+    </a-assets>
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+    <a-entity id="target" mindar-image-target="targetIndex: 0">
+      <a-entity
+        id="arRig"
+        position="0 0 0"
+        animation__float="property: position; from: 0 0 0; to: 0 0.03 0; dur: 2200; dir: alternate; loop: true; easing: easeInOutSine">
+        <a-plane
+          id="arBackPlane"
+          src="#arMainBack"
+          position="0 0 -0.02"
+          height="1.34"
+          width="1.34"
+          material="transparent: true; opacity: 0"></a-plane>
+        <a-plane
+          id="arPlane"
+          src="#arMain"
+          position="0 0.01 0.02"
+          height="1.15"
+          width="1.15"
+          material="transparent: true; opacity: 0"></a-plane>
+        <a-plane
+          id="arFrontPlane"
+          src="#arMainFront"
+          position="0 0.15 0.08"
+          height="1.34"
+          width="1.34"
+          material="transparent: true; opacity: 0"></a-plane>
+      </a-entity>
+    </a-entity>
+  </a-scene>
+
+  <nav class="control-panel" aria-label="AR interaction controls">
+    <div class="mode-buttons">
+      <button class="is-active" type="button" data-mode="main">开盒</button>
+      <button type="button" data-mode="story">刺刺</button>
+      <button type="button" data-mode="feature">能量</button>
+      <button type="button" data-mode="reward">抽盒</button>
+    </div>
+    <div class="result-panel" aria-live="polite">
+      <div class="brand-lockup">
+        <img src="./assets/popmart-logo.png" alt="POP MART" />
+        <span>Zsiga Back-to-school WebAR</span>
+      </div>
+      <h1 id="resultTitle">点击开盒，解锁下一步</h1>
+      <p id="resultText">先把盲盒真正打开。开盒后才会解锁刺刺、能量抽卡和抽盒收尾，完整体验从这里开始。</p>
+      <div class="action-row is-visible" id="actionRow">
+        <button class="primary-action" id="openBoxButton" type="button">点击开盒</button>
+      </div>
+      <div class="story-panel" id="storyPanel" hidden>
+        <p class="story-panel__hint">点一点，让 Zsiga 替你说出今天的边界态度，AR 画面也会跟着亮一下。</p>
+        <div class="story-buttons">
+          <button class="story-trigger" type="button" data-story-key="slow">让我慢热</button>
+          <button class="story-trigger" type="button" data-story-key="space">给我点空间</button>
+          <button class="story-trigger" type="button" data-story-key="own">按我来</button>
+        </div>
+        <p class="story-quote" id="storyQuote">先点一条态度签，刺刺层才算真正被触发。</p>
+      </div>
+    </div>
+  </nav>
+
+  <section class="reward-sheet" id="rewardSheet" hidden aria-live="polite">
+    <div class="reward-sheet__panel">
+      <button class="sheet-close" id="rewardCloseButton" type="button" aria-label="关闭收盒弹层">×</button>
+      <p class="sheet-kicker">POP MART AR RESULT</p>
+      <h2 class="sheet-title" id="rewardSheetTitle">收下你的开学能量卡</h2>
+      <p class="sheet-text" id="rewardSheetText">保存这一轮结果，再前往泡泡抽盒机官方入口，把 AR 互动自然收束到品牌体验。</p>
+      <div class="reward-card">
+        <span class="reward-chip">本轮能量结果</span>
+        <h3 class="reward-energy" id="rewardSheetEnergy">倔强生长</h3>
+        <p class="reward-copy" id="rewardSheetCopy">这张能量卡会在这里显示，方便用户截图保存或分享。</p>
+        <p class="reward-attitude" id="rewardSheetAttitude">今日边界宣言：按我来，也很好。</p>
+      </div>
+      <div class="entry-card">
+        <p class="entry-kicker">官方入口</p>
+        <h3 class="entry-title">继续前往泡泡抽盒机</h3>
+        <p class="entry-text">完成 AR 互动后，可从这里继续进入泡泡抽盒机官方入口，延续开盒体验与品牌转化动作。</p>
+        <div class="entry-tags">
+          <span>截图分享结果</span>
+          <span>跳转官方入口</span>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button class="secondary-action" id="rewardShareButton" type="button">保存结果</button>
+        <button class="primary-action" id="rewardEntryButton" type="button">前往官方入口</button>
+      </div>
+      <button class="tertiary-action" id="rewardRedrawButton" type="button">再抽一张能量卡</button>
+      <p class="sheet-feedback" id="rewardSheetFeedback"></p>
+      <p class="sheet-note">本页仅为 AR 开盒互动体验，真实购买与抽盒请以前往泡泡抽盒机官方入口为准。</p>
+    </div>
+  </section>
+
+  <script>
+    const storyVariants = {
+      slow: {
+        label: "让我慢热",
+        title: "刺一下：让我慢热，不必立刻合群",
+        text: "这一下不是退缩，而是给自己一点进入新环境的缓冲。Zsiga 的边界感允许你先观察、再靠近、再慢慢发光。",
+        quote: "先别催，我会用自己的速度发光。",
+        preview: "./assets/ar-object-story-slow.svg?v=20260529g",
+        ar: "#arStorySlow",
+        front: "#arStoryFrontSlow"
+      },
+      space: {
+        label: "给我点空间",
+        title: "刺一下：先给我一点空间",
+        text: "点亮这根刺，代表今天可以不做气氛担当。保留一点安静和距离，是 Zsiga 保护自己的方式。",
+        quote: "不必每一秒都回应世界。",
+        preview: "./assets/ar-object-story-space.svg?v=20260529g",
+        ar: "#arStorySpace",
+        front: "#arStoryFrontSpace"
+      },
+      own: {
+        label: "按我来",
+        title: "刺一下：按我来，也很好",
+        text: "这一下代表我不复制别人的标准答案。Zsiga 的倔强不是对抗世界，而是承认自己的节奏、脾气和审美。",
+        quote: "我可以不一样，但我还是我。",
+        preview: "./assets/ar-object-story-own.svg?v=20260529g",
+        ar: "#arStoryOwn",
+        front: "#arStoryFrontOwn"
+      }
+    };
+
+    const mainVariants = [
+      {
+        name: "Zsiga 官方角色图 NO.01",
+        title: "你开出了：Zsiga 官方角色图 NO.01",
+        text: "这一轮随机开出了第 01 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/01.png?v=20260529m",
+        ar: "#arMainOfficial01",
+        front: "#arMainFront"
+      },
+      {
+        name: "Zsiga 官方角色图 NO.02",
+        title: "你开出了：Zsiga 官方角色图 NO.02",
+        text: "这一轮随机开出了第 02 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/02.png?v=20260529m",
+        ar: "#arMainOfficial02",
+        front: "#arMainFront"
+      },
+      {
+        name: "Zsiga 官方角色图 NO.03",
+        title: "你开出了：Zsiga 官方角色图 NO.03",
+        text: "这一轮随机开出了第 03 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/03.png?v=20260529m",
+        ar: "#arMainOfficial03",
+        front: "#arMainFront"
+      },
+      {
+        name: "Zsiga 官方角色图 NO.04",
+        title: "你开出了：Zsiga 官方角色图 NO.04",
+        text: "这一轮随机开出了第 04 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/04.png?v=20260529m",
+        ar: "#arMainOfficial04",
+        front: "#arMainFront"
+      },
+      {
+        name: "Zsiga 官方角色图 NO.05",
+        title: "你开出了：Zsiga 官方角色图 NO.05",
+        text: "这一轮随机开出了第 05 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/05.png?v=20260529m",
+        ar: "#arMainOfficial05",
+        front: "#arMainFront"
+      },
+      {
+        name: "Zsiga 官方角色图 NO.06",
+        title: "你开出了：Zsiga 官方角色图 NO.06",
+        text: "这一轮随机开出了第 06 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/06.png?v=20260529m",
+        ar: "#arMainOfficial06",
+        front: "#arMainFront"
+      },
+      {
+        name: "Zsiga 官方角色图 NO.07",
+        title: "你开出了：Zsiga 官方角色图 NO.07",
+        text: "这一轮随机开出了第 07 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        preview: "./assets/openbox-results/07.png?v=20260529m",
+        ar: "#arMainOfficial07",
+        front: "#arMainFront"
+      }
+    ];
+
+    const energyVariants = [
+      {
+        title: "你抽到了：倔强生长",
+        text: "这张能量卡提醒你：不急着成为标准答案。先允许自己真实、慢热，也有一点点小刺。",
+        preview: "./assets/ar-object-feature-grow.svg?v=20260529f",
+        ar: "#arFeatureGrow",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：按自己来",
+        text: "这张能量卡提醒你：新学期不用复制别人的节奏。自由不是叛逆，而是更清楚自己要什么。",
+        preview: "./assets/ar-object-feature-self.svg?v=20260529f",
+        ar: "#arFeatureSelf",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：慢热发光",
+        text: "这张能量卡提醒你：可以先安静一点，不急着亮相。先在自己的速度里慢慢变强，也慢慢发光。",
+        preview: "./assets/ar-object-feature-glow.svg?v=20260529f",
+        ar: "#arFeatureGlow",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：先找节奏",
+        text: "别急着一开学就满格冲刺。先把自己的生活和状态慢慢调顺，后劲会更稳。",
+        preview: "./assets/ar-object-feature-rush.svg?v=20260529f",
+        ar: "#arFeatureRush",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：暂停社交",
+        text: "今天可以不做气氛担当。先把注意力留给自己，也是一种很重要的边界感。",
+        preview: "./assets/ar-object-feature-social.svg?v=20260529f",
+        ar: "#arFeatureSocial",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：保持好奇",
+        text: "别急着给自己下定义。多看看、多试试，新学期也可以重新认识自己。",
+        preview: "./assets/ar-object-feature-curious.svg?v=20260529f",
+        ar: "#arFeatureCurious",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：小步前进",
+        text: "不用一下子追平所有目标。今天先往前走一小步，也已经很了不起。",
+        preview: "./assets/ar-object-feature-step.svg?v=20260529f",
+        ar: "#arFeatureStep",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：留点空白",
+        text: "不是每一格日程都要塞满。给自己留一点发呆和喘气的位置，也是在保护自己。",
+        preview: "./assets/ar-object-feature-space.svg?v=20260529f",
+        ar: "#arFeatureSpace",
+        front: "#arFeatureFront"
+      },
+      {
+        title: "你抽到了：自由入场",
+        text: "带着自己的脾气和审美去开学。你不必先像别人，才有资格走进新学期。",
+        preview: "./assets/ar-object-feature-enter.svg?v=20260529f",
+        ar: "#arFeatureEnter",
+        front: "#arFeatureFront"
+      }
+    ];
+
+    const featureLoadingState = {
+      title: "正在抽取你的开学能量",
+      text: "Zsiga 正在为你生成这一轮的开学情绪卡，请稍等一下。",
+      preview: "./assets/ar-object-feature-loading.svg?v=20260529e",
+      back: "#arFeatureBack",
+      ar: "#arFeatureLoading",
+      front: "#arFeatureFrontLoading"
+    };
+
+    const modes = {
+      mainClosed: {
+        title: "点击开盒，解锁下一步",
+        text: "先把盲盒真正打开。开盒后才会解锁刺刺、能量抽卡和抽盒收尾，完整体验从这里开始。",
+        preview: "./assets/ar-object-main-closed.svg?v=20260529f",
+        back: "#arMainBack",
+        ar: "#arMainClosed",
+        front: "#arMainFrontClosed"
+      },
+      main: {
+        title: "Zsiga 情绪盲盒已开盒",
+        text: "泡泡玛特官方海报已经被正式开盒。现在你可以继续看刺刺、抽 9 张随机能量卡中的一张，再完成抽盒收尾。本页开盒仅为互动体验，不对应真实商品结果。",
+        preview: "./assets/ar-object-main.svg?v=20260529f",
+        back: "#arMainBack",
+        ar: "#arMain",
+        front: "#arMainFront"
+      },
+      story: {
+        title: "点亮一根刺，选你的边界态度",
+        text: "刺刺层不只是解释角色。点一下下面的态度签，让 Zsiga 替你把今天的边界感说出来。",
+        preview: "./assets/ar-object-story.svg?v=20260529e",
+        back: "#arStoryBack",
+        ar: "#arStory",
+        front: "#arStoryFront"
+      },
+      feature: {
+        title: "正在抽取你的开学能量",
+        text: "盲盒正在为你随机掉落 9 张开学情绪卡中的一张，请稍等一下。",
+        back: "#arFeatureBack"
+      },
+      reward: {
+        title: "收下结果，继续前往官方入口",
+        text: "先保存这一轮结果，再前往泡泡抽盒机官方入口，让互动自然过渡到品牌转化。",
+        preview: "./assets/ar-object-reward.svg?v=20260529e",
+        back: "#arRewardBack",
+        ar: "#arReward",
+        front: "#arRewardFront"
+      }
+    };
+
+    const buttons = Array.from(document.querySelectorAll("[data-mode]"));
+    const title = document.getElementById("resultTitle");
+    const text = document.getElementById("resultText");
+    const previewObject = document.getElementById("previewObject");
+    const arBackPlane = document.getElementById("arBackPlane");
+    const arPlane = document.getElementById("arPlane");
+    const arFrontPlane = document.getElementById("arFrontPlane");
+    const target = document.getElementById("target");
+    const hint = document.getElementById("hint");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const actionRow = document.getElementById("actionRow");
+    const openBoxButton = document.getElementById("openBoxButton");
+    const storyPanel = document.getElementById("storyPanel");
+    const storyQuote = document.getElementById("storyQuote");
+    const storyButtons = Array.from(document.querySelectorAll("[data-story-key]"));
+    const rewardSheet = document.getElementById("rewardSheet");
+    const rewardSheetTitle = document.getElementById("rewardSheetTitle");
+    const rewardSheetText = document.getElementById("rewardSheetText");
+    const rewardSheetEnergy = document.getElementById("rewardSheetEnergy");
+    const rewardSheetCopy = document.getElementById("rewardSheetCopy");
+    const rewardSheetAttitude = document.getElementById("rewardSheetAttitude");
+    const rewardSheetFeedback = document.getElementById("rewardSheetFeedback");
+    const rewardEntryButton = document.getElementById("rewardEntryButton");
+    const rewardShareButton = document.getElementById("rewardShareButton");
+    const rewardRedrawButton = document.getElementById("rewardRedrawButton");
+    const rewardCloseButton = document.getElementById("rewardCloseButton");
+    const arRig = document.getElementById("arRig");
+    let currentMode = "mainClosed";
+    let isTracking = false;
+    let featureDrawTimer = null;
+    let rewardFeedbackTimer = null;
+    let previewSwapTimer = null;
+    let hasOpenedBox = false;
+    let lastDrawnEnergy = null;
+    let selectedStoryKey = null;
+    let lastOpenedMain = null;
+    let lastOpenedMainIndex = -1;
+
+    function updateActionRow(mode) {
+      const visible = mode === "mainClosed" && !hasOpenedBox;
+      actionRow.classList.toggle("is-visible", visible);
+    }
+
+    function syncButtons() {
+      buttons.forEach((button) => {
+        const locked = !hasOpenedBox && button.dataset.mode !== "main";
+        button.disabled = locked;
+        button.classList.toggle("is-locked", locked);
+      });
+    }
+
+    function pickRandomEnergy() {
+      return energyVariants[Math.floor(Math.random() * energyVariants.length)];
+    }
+
+    function pickRandomMain(excludeIndex = -1) {
+      if (mainVariants.length <= 1) {
+        lastOpenedMainIndex = 0;
+        return mainVariants[0];
+      }
+      let nextIndex = excludeIndex;
+      while (nextIndex === excludeIndex) {
+        nextIndex = Math.floor(Math.random() * mainVariants.length);
+      }
+      lastOpenedMainIndex = nextIndex;
+      return mainVariants[nextIndex];
+    }
+
+    function getSelectedStory() {
+      return selectedStoryKey ? storyVariants[selectedStoryKey] : null;
+    }
+
+    function getEnergyLabel(energy) {
+      return energy.title.replace("你抽到了：", "");
+    }
+
+    function getModeData(mode) {
+      if (mode === "feature") {
+        return {
+          back: modes.feature.back,
+          ...pickRandomEnergy()
+        };
+      }
+      if (mode === "story") {
+        const story = getSelectedStory();
+        return story
+          ? {
+              ...modes.story,
+              title: story.title,
+              text: story.text,
+              preview: story.preview,
+              ar: story.ar,
+              front: story.front
+            }
+          : modes.story;
+      }
+      if (mode === "main") {
+        const main = lastOpenedMain || pickRandomMain();
+        lastOpenedMain = main;
+        return {
+          ...modes.main,
+          title: main.title,
+          text: `${main.text} 继续点击“刺刺 / 能量 / 抽盒”，把这轮互动体验走完整。`,
+          preview: main.preview,
+          ar: main.ar,
+          front: main.front
+        };
+      }
+      if (mode === "reward") {
+        const energy = lastDrawnEnergy || pickRandomEnergy();
+        lastDrawnEnergy = energy;
+        const label = getEnergyLabel(energy);
+        return {
+          ...modes.reward,
+          title: `收下这张「${label}」`,
+          text: `这一轮盲盒结果已经生成。先保存「${label}」，再前往泡泡抽盒机官方入口。`
+        };
+      }
+      return modes[mode];
+    }
+
+    function refreshPreviewObject(src) {
+      if (!previewObject) {
+        return;
+      }
+      if (!src) {
+        previewObject.classList.add("is-hidden");
+        previewObject.removeAttribute("src");
+        return;
+      }
+      if (previewSwapTimer) {
+        window.clearTimeout(previewSwapTimer);
+      }
+      previewObject.classList.remove("is-hidden");
+      previewObject.classList.add("is-refreshing");
+      previewSwapTimer = window.setTimeout(() => {
+        previewObject.src = src;
+        previewObject.classList.remove("is-refreshing");
+        previewSwapTimer = null;
+      }, 110);
+    }
+
+    function applyModeData(mode, data) {
+      currentMode = mode;
+      updateActionRow(mode);
+      buttons.forEach((button) => {
+        const isMainClosedButton = mode === "mainClosed" && button.dataset.mode === "main";
+        button.classList.toggle("is-active", button.dataset.mode === mode || isMainClosedButton);
+      });
+      storyPanel.hidden = mode !== "story";
+      if (!storyPanel.hidden) {
+        storyButtons.forEach((button) => {
+          button.classList.toggle("is-picked", button.dataset.storyKey === selectedStoryKey);
+        });
+        storyQuote.textContent = selectedStoryKey
+          ? `已点亮：${storyVariants[selectedStoryKey].quote}`
+          : "先点一条态度签，刺刺层才算真正被触发。";
+      }
+      title.textContent = data.title;
+      text.textContent = data.text;
+      refreshPreviewObject(data.preview);
+      const hideArContent = mode === "mainClosed";
+      if (arBackPlane) {
+        if (hideArContent) {
+          arBackPlane.setAttribute("src", "");
+          arBackPlane.setAttribute("material", "transparent: true; opacity: 0");
+        } else {
+          arBackPlane.setAttribute("src", data.back);
+        }
+      }
+      if (arPlane) {
+        if (hideArContent) {
+          arPlane.setAttribute("src", "");
+          arPlane.setAttribute("material", "transparent: true; opacity: 0");
+        } else {
+          arPlane.setAttribute("src", data.ar);
+        }
+      }
+      if (arFrontPlane) {
+        if (hideArContent) {
+          arFrontPlane.setAttribute("src", "");
+          arFrontPlane.setAttribute("material", "transparent: true; opacity: 0");
+        } else {
+          arFrontPlane.setAttribute("src", data.front);
+        }
+      }
+      if (isTracking && !hideArContent) {
+        playReveal();
+      }
+    }
+
+    function animateLayer(plane, { fromScale, toScale, toOpacity, delay }) {
+      plane.removeAttribute("animation__pop");
+      plane.removeAttribute("animation__fade");
+      plane.setAttribute("scale", fromScale);
+      plane.setAttribute("material", "transparent: true; opacity: 0");
+      window.setTimeout(() => {
+        plane.setAttribute(
+          "animation__pop",
+          `property: scale; from: ${fromScale}; to: ${toScale}; dur: 420; easing: easeOutBack`
+        );
+        plane.setAttribute(
+          "animation__fade",
+          `property: material.opacity; from: 0; to: ${toOpacity}; dur: 340; easing: easeOutQuad`
+        );
+      }, delay);
+    }
+
+    function playReveal() {
+      animateLayer(arBackPlane, {
+        fromScale: "0.55 0.55 0.55",
+        toScale: "1 1 1",
+        toOpacity: 0.92,
+        delay: 0
+      });
+      animateLayer(arPlane, {
+        fromScale: "0.78 0.78 0.78",
+        toScale: "1 1 1",
+        toOpacity: 1,
+        delay: 110
+      });
+      animateLayer(arFrontPlane, {
+        fromScale: "0.65 0.65 0.65",
+        toScale: "1 1 1",
+        toOpacity: 1,
+        delay: 180
+      });
+    }
+
+    function pulseStory() {
+      if (!arRig) {
+        return;
+      }
+      arRig.removeAttribute("animation__storypulse");
+      arRig.setAttribute("scale", "1 1 1");
+      arRig.setAttribute(
+        "animation__storypulse",
+        "property: scale; from: 1 1 1; to: 1.08 1.08 1.08; dur: 180; dir: alternate; loop: 2; easing: easeOutCubic"
+      );
+      if (arFrontPlane) {
+        arFrontPlane.removeAttribute("animation__storyflash");
+        arFrontPlane.setAttribute(
+          "animation__storyflash",
+          "property: material.opacity; from: 0.82; to: 1; dur: 140; dir: alternate; loop: 2; easing: easeOutQuad"
+        );
+      }
+    }
+
+    function setRewardFeedback(message) {
+      if (rewardFeedbackTimer) {
+        window.clearTimeout(rewardFeedbackTimer);
+        rewardFeedbackTimer = null;
+      }
+      rewardSheetFeedback.textContent = message;
+      if (message) {
+        rewardFeedbackTimer = window.setTimeout(() => {
+          rewardSheetFeedback.textContent = "";
+          rewardFeedbackTimer = null;
+        }, 2600);
+      }
+    }
+
+    function openRewardSheet() {
+      const energy = lastDrawnEnergy || pickRandomEnergy();
+      const story = getSelectedStory();
+      lastDrawnEnergy = energy;
+      const label = getEnergyLabel(energy);
+      rewardSheetTitle.textContent = `收下「${label}」这张能量卡`;
+      rewardSheetText.textContent = "这轮 AR 情绪盲盒已经完成。先保存你的结果，再继续前往泡泡抽盒机官方入口。";
+      rewardSheetEnergy.textContent = label;
+      rewardSheetCopy.textContent = energy.text;
+      rewardSheetAttitude.textContent = story
+        ? `今日边界宣言：${story.quote}`
+        : "今日边界宣言：先去“刺刺”点一条态度签，能让这轮开盒更完整。";
+      rewardEntryButton.textContent = "前往官方入口";
+      setRewardFeedback("");
+      rewardSheet.hidden = false;
+      document.body.classList.add("is-reward-open");
+      window.requestAnimationFrame(() => {
+        rewardSheet.classList.add("is-visible");
+      });
+    }
+
+    function closeRewardSheet() {
+      rewardSheet.classList.remove("is-visible");
+      window.setTimeout(() => {
+        if (!rewardSheet.classList.contains("is-visible")) {
+          rewardSheet.hidden = true;
+          document.body.classList.remove("is-reward-open");
+        }
+      }, 180);
+    }
+
+    async function shareReward() {
+      const energy = lastDrawnEnergy || pickRandomEnergy();
+      const story = getSelectedStory();
+      lastDrawnEnergy = energy;
+      const label = getEnergyLabel(energy);
+      const storyLine = story ? `\n我的边界宣言：${story.quote}` : "";
+      const shareText = `我在 Zsiga 开学季 AR 情绪盲盒里抽到了「${label}」${storyLine}\n${energy.text}\n#泡泡玛特 #Zsiga开学季AR情绪盲盒`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `${label} | Zsiga 开学季 AR 情绪盲盒`,
+            text: shareText
+          });
+          setRewardFeedback("已调起系统分享，可以直接保存或发给朋友。");
+          return;
+        } catch (error) {
+          if (error && error.name === "AbortError") {
+            return;
+          }
+        }
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(shareText);
+          setRewardFeedback("分享文案已复制，也可以直接截图保存这一页。");
+          return;
+        } catch (error) {}
+      }
+
+      setRewardFeedback("当前浏览器不支持一键分享，请直接截图保存当前结果页。");
+    }
+
+    function enterPopmartBox() {
+      rewardEntryButton.textContent = "官方入口已点亮";
+      setRewardFeedback("这里预留给泡泡抽盒机小程序或活动页真实跳转。");
+      window.setTimeout(() => {
+        rewardEntryButton.textContent = "前往官方入口";
+      }, 1600);
+    }
+
+    function selectStoryVariant(key) {
+      selectedStoryKey = key;
+      applyModeData("story", getModeData("story"));
+      pulseStory();
+    }
+
+    function setMode(mode, options = {}) {
+      const { rerollMain = false } = options;
+      let nextMode = mode;
+
+      if (!hasOpenedBox) {
+        nextMode = mode === "main" ? "mainClosed" : null;
+      } else if (mode === "mainClosed") {
+        nextMode = "main";
+      }
+
+      if (!nextMode) {
+        return;
+      }
+
+      if (nextMode !== "reward") {
+        closeRewardSheet();
+      }
+
+      if (featureDrawTimer) {
+        window.clearTimeout(featureDrawTimer);
+        featureDrawTimer = null;
+      }
+
+      if (nextMode === "main" && hasOpenedBox && rerollMain) {
+        lastOpenedMain = pickRandomMain(lastOpenedMainIndex);
+      }
+
+      if (nextMode === "feature") {
+        applyModeData(nextMode, featureLoadingState);
+        featureDrawTimer = window.setTimeout(() => {
+          lastDrawnEnergy = getModeData("feature");
+          applyModeData("feature", lastDrawnEnergy);
+          featureDrawTimer = null;
+        }, 620);
+        return;
+      }
+
+      if (nextMode === "reward") {
+        const rewardData = getModeData("reward");
+        applyModeData("reward", rewardData);
+        openRewardSheet();
+        return;
+      }
+
+      const data = getModeData(nextMode);
+      applyModeData(nextMode, data);
+    }
+
+    function openBox() {
+      if (hasOpenedBox) {
+        setMode("main", { rerollMain: true });
+        return;
+      }
+      openBoxButton.textContent = "开盒中...";
+      openBoxButton.disabled = true;
+      window.setTimeout(() => {
+        hasOpenedBox = true;
+        lastOpenedMain = pickRandomMain();
+        openBoxButton.textContent = "点击开盒";
+        openBoxButton.disabled = false;
+        syncButtons();
+        setMode("main");
+      }, 420);
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () =>
+        setMode(button.dataset.mode, {
+          rerollMain: button.dataset.mode === "main" && hasOpenedBox
+        })
+      );
+    });
+    storyButtons.forEach((button) => {
+      button.addEventListener("click", () => selectStoryVariant(button.dataset.storyKey));
+    });
+    openBoxButton?.addEventListener("click", openBox);
+    rewardEntryButton?.addEventListener("click", enterPopmartBox);
+    rewardShareButton?.addEventListener("click", shareReward);
+    rewardRedrawButton?.addEventListener("click", () => {
+      closeRewardSheet();
+      setMode("feature");
+    });
+    rewardCloseButton?.addEventListener("click", () => {
+      closeRewardSheet();
+      setMode("main");
+    });
+    rewardSheet?.addEventListener("click", (event) => {
+      if (event.target === rewardSheet) {
+        closeRewardSheet();
+        setMode("main");
+      }
+    });
+
+    function setTrackingStatus(status) {
+      statusDot.classList.toggle("is-found", status === "found");
+      statusDot.classList.toggle("is-lost", status === "lost");
+      if (status === "ready") {
+        statusText.textContent = "允许摄像头权限，然后把手机对准泡泡玛特 Zsiga 官方竖版海报。识别成功后，AR 情绪盲盒会贴在图上。";
+      }
+      if (status === "found") {
+        isTracking = true;
+        if (hasOpenedBox) {
+          playReveal();
+        } else {
+          applyModeData("mainClosed", modes.mainClosed);
+        }
+        statusText.textContent = "已识别到官方海报：现在可以点击底部按钮，开启 Zsiga 的情绪盲盒。";
+      }
+      if (status === "lost") {
+        isTracking = false;
+        statusText.textContent = "暂时丢失识别：把官方海报放回画面中央，保持光线充足，当前页面会保持在你刚刚停留的步骤。";
+      }
+    }
+
+    target.addEventListener("targetFound", () => setTrackingStatus("found"));
+    target.addEventListener("targetLost", () => setTrackingStatus("lost"));
+
+    fetch("./assets/targets.mind", { method: "HEAD" })
+      .then((response) => {
+        if (response.ok) {
+          document.body.classList.add("has-real-ar");
+          hint.querySelector(".marker-link")?.remove();
+          setTrackingStatus("ready");
+        }
+      })
+      .catch(() => {});
+
+    syncButtons();
+    setMode("mainClosed");
+  </script>
+</body>
+</html>

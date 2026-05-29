@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <rect x="226" y="146" width="180" height="64" rx="32" fill="#2d2522"/>
+  <text x="316" y="188" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700" fill="#ffffff">自由</text>
+  <rect x="468" y="126" width="206" height="64" rx="32" fill="#2d2522"/>
+  <text x="571" y="168" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700" fill="#ffffff">倔强</text>
+  <path d="M420 318 C468 278 534 278 588 320" fill="none" stroke="#cb532d" stroke-width="10" stroke-linecap="round"/>
+  <path d="M574 300 610 310 588 338" fill="none" stroke="#cb532d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

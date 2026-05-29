@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.16"/>
+    </filter>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8f2e7"/>
+      <stop offset="100%" stop-color="#f1e8db"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="116" y="118" width="668" height="640" rx="42" fill="url(#card)"/>
+    <rect x="116" y="118" width="668" height="640" rx="42" fill="none" stroke="#2d2522" stroke-width="8"/>
+  </g>
+
+  <rect x="152" y="150" width="164" height="52" rx="4" fill="#f20519"/>
+  <text x="234" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">POP MART</text>
+  <text x="152" y="238" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" fill="#6c6259">随机开盒结果</text>
+  <text x="152" y="322" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="72" font-weight="700" fill="#7f5537">Zsiga 软耳款</text>
+  <text x="152" y="388" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="40" font-weight="700" fill="#e1847a">先出场的是：慢热软耳仔</text>
+
+  <ellipse cx="584" cy="474" rx="144" ry="128" fill="#ffe4dc"/>
+  <ellipse cx="584" cy="474" rx="154" ry="138" fill="none" stroke="#ffd0c0" stroke-width="8" opacity="0.66"/>
+
+  <ellipse cx="548" cy="354" rx="32" ry="84" fill="#f6d2c8" stroke="#2d2522" stroke-width="7" transform="rotate(-10 548 354)"/>
+  <ellipse cx="620" cy="354" rx="32" ry="84" fill="#f6d2c8" stroke="#2d2522" stroke-width="7" transform="rotate(10 620 354)"/>
+  <ellipse cx="584" cy="472" rx="102" ry="118" fill="#fffaf6" stroke="#2d2522" stroke-width="7"/>
+  <circle cx="546" cy="436" r="16" fill="#2d2522"/>
+  <circle cx="622" cy="436" r="16" fill="#2d2522"/>
+  <circle cx="552" cy="430" r="4" fill="#ffffff"/>
+  <circle cx="628" cy="430" r="4" fill="#ffffff"/>
+  <ellipse cx="584" cy="488" rx="18" ry="12" fill="#f1b8a2"/>
+  <path d="M556 520 Q584 548 612 520" fill="none" stroke="#2d2522" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="530" cy="492" r="10" fill="#ffd0c0"/>
+  <circle cx="638" cy="492" r="10" fill="#ffd0c0"/>
+
+  <rect x="152" y="472" width="238" height="124" rx="28" fill="#fff7dc" stroke="#cfad6a" stroke-width="4"/>
+  <text x="178" y="520" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700" fill="#2d2522">角色气质</text>
+  <text x="178" y="562" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="24" fill="#5a4e45">慢热 / 柔软 / 安静发光</text>
+
+  <rect x="152" y="678" width="592" height="48" rx="24" fill="#2d2522"/>
+  <text x="448" y="710" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="26" font-weight="700" fill="#ffffff">你开出了 Zsiga 软耳款角色卡</text>
+</svg>
