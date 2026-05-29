@@ -506,6 +506,40 @@
         rgba(255, 255, 255, 0.05);
     }
 
+    .wechat-qr {
+      display: grid;
+      grid-template-columns: 138px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .wechat-qr img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      background: #ffffff;
+    }
+
+    .wechat-qr__meta {
+      min-width: 0;
+    }
+
+    .wechat-qr__meta p {
+      margin: 0;
+    }
+
+    .wechat-qr__link {
+      margin-top: 8px;
+      color: var(--yellow);
+      font-size: 12px;
+      word-break: break-all;
+    }
+
     .entry-kicker {
       margin: 0;
       color: var(--yellow);
@@ -607,6 +641,10 @@
       }
 
       .sheet-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .wechat-qr {
         grid-template-columns: 1fr;
       }
     }
@@ -841,7 +879,7 @@
       <button class="sheet-close" id="rewardCloseButton" type="button" aria-label="关闭收盒弹层">×</button>
       <p class="sheet-kicker">POP MART AR RESULT</p>
       <h2 class="sheet-title" id="rewardSheetTitle">收下你的开学能量卡</h2>
-      <p class="sheet-text" id="rewardSheetText">保存这一轮结果，再前往泡泡抽盒机官方入口，把 AR 互动自然收束到品牌体验。</p>
+      <p class="sheet-text" id="rewardSheetText">保存这一轮结果，再微信扫码关注泡泡玛特公众号，把 AR 互动自然收束到品牌触达。</p>
       <div class="reward-card">
         <span class="reward-chip">本轮能量结果</span>
         <h3 class="reward-energy" id="rewardSheetEnergy">倔强生长</h3>
@@ -849,21 +887,27 @@
         <p class="reward-attitude" id="rewardSheetAttitude">今日边界宣言：按我来，也很好。</p>
       </div>
       <div class="entry-card">
-        <p class="entry-kicker">官方入口</p>
-        <h3 class="entry-title">继续前往泡泡抽盒机</h3>
-        <p class="entry-text">完成 AR 互动后，可从这里继续进入泡泡抽盒机官方入口，延续开盒体验与品牌转化动作。</p>
-        <div class="entry-tags">
-          <span>截图分享结果</span>
-          <span>跳转官方入口</span>
+        <p class="entry-kicker">公众号入口</p>
+        <h3 class="entry-title">微信扫码关注泡泡玛特公众号</h3>
+        <div class="wechat-qr">
+          <img src="./assets/wxgzh.png?v=20260529a" alt="泡泡玛特微信公众号二维码" />
+          <div class="wechat-qr__meta">
+            <p class="entry-text">完成 AR 互动后，扫码关注公众号，继续接收泡泡玛特内容与活动信息。</p>
+            <p class="wechat-qr__link">http://weixin.qq.com/q/02FSpeEJE8bGe10000w07H</p>
+            <div class="entry-tags">
+              <span>扫码关注公众号</span>
+              <span>保存二维码</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="sheet-actions">
         <button class="secondary-action" id="rewardShareButton" type="button">保存结果</button>
-        <button class="primary-action" id="rewardEntryButton" type="button">前往官方入口</button>
+        <button class="primary-action" id="rewardEntryButton" type="button">保存二维码</button>
       </div>
       <button class="tertiary-action" id="rewardRedrawButton" type="button">再抽一张能量卡</button>
       <p class="sheet-feedback" id="rewardSheetFeedback"></p>
-      <p class="sheet-note">本页仅为 AR 开盒互动体验，真实购买与抽盒请以前往泡泡抽盒机官方入口为准。</p>
+      <p class="sheet-note">本页仅为 AR 开盒互动体验，二维码仅用于公众号关注与品牌触达。</p>
     </div>
   </section>
 
@@ -902,7 +946,7 @@
       {
         name: "Zsiga 官方角色图 NO.01",
         title: "你开出了：Zsiga 官方角色图 NO.01",
-        text: "这一轮随机开出了第 01 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 01 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/01.png?v=20260529m",
         ar: "#arMainOfficial01",
         front: "#arMainFront"
@@ -910,7 +954,7 @@
       {
         name: "Zsiga 官方角色图 NO.02",
         title: "你开出了：Zsiga 官方角色图 NO.02",
-        text: "这一轮随机开出了第 02 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 02 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/02.png?v=20260529m",
         ar: "#arMainOfficial02",
         front: "#arMainFront"
@@ -918,7 +962,7 @@
       {
         name: "Zsiga 官方角色图 NO.03",
         title: "你开出了：Zsiga 官方角色图 NO.03",
-        text: "这一轮随机开出了第 03 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 03 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/03.png?v=20260529m",
         ar: "#arMainOfficial03",
         front: "#arMainFront"
@@ -926,7 +970,7 @@
       {
         name: "Zsiga 官方角色图 NO.04",
         title: "你开出了：Zsiga 官方角色图 NO.04",
-        text: "这一轮随机开出了第 04 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 04 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/04.png?v=20260529m",
         ar: "#arMainOfficial04",
         front: "#arMainFront"
@@ -934,7 +978,7 @@
       {
         name: "Zsiga 官方角色图 NO.05",
         title: "你开出了：Zsiga 官方角色图 NO.05",
-        text: "这一轮随机开出了第 05 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 05 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/05.png?v=20260529m",
         ar: "#arMainOfficial05",
         front: "#arMainFront"
@@ -942,7 +986,7 @@
       {
         name: "Zsiga 官方角色图 NO.06",
         title: "你开出了：Zsiga 官方角色图 NO.06",
-        text: "这一轮随机开出了第 06 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 06 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/06.png?v=20260529m",
         ar: "#arMainOfficial06",
         front: "#arMainFront"
@@ -950,7 +994,7 @@
       {
         name: "Zsiga 官方角色图 NO.07",
         title: "你开出了：Zsiga 官方角色图 NO.07",
-        text: "这一轮随机开出了第 07 张官方角色图。本页仅为 AR 开盒互动体验，真实购买与抽盒请前往下方官方入口。",
+        text: "这一轮随机开出了第 07 张官方角色图。本页仅为 AR 开盒互动体验，扫码关注下方公众号可继续接收品牌内容。",
         preview: "./assets/openbox-results/07.png?v=20260529m",
         ar: "#arMainOfficial07",
         front: "#arMainFront"
@@ -1063,8 +1107,8 @@
         back: "#arFeatureBack"
       },
       reward: {
-        title: "收下结果，继续前往官方入口",
-        text: "先保存这一轮结果，再前往泡泡抽盒机官方入口，让互动自然过渡到品牌转化。",
+        title: "收下结果，继续关注公众号",
+        text: "先保存这一轮结果，再扫码关注泡泡玛特公众号，让互动自然过渡到品牌触达。",
         preview: "./assets/ar-object-reward.svg?v=20260529e",
         back: "#arRewardBack",
         ar: "#arReward",
@@ -1100,6 +1144,8 @@
     const rewardRedrawButton = document.getElementById("rewardRedrawButton");
     const rewardCloseButton = document.getElementById("rewardCloseButton");
     const arRig = document.getElementById("arRig");
+    const popmartOfficialQrImage = "./assets/wxgzh.png?v=20260529a";
+    const popmartOfficialQrLink = "http://weixin.qq.com/q/02FSpeEJE8bGe10000w07H";
     let currentMode = "mainClosed";
     let isTracking = false;
     let featureDrawTimer = null;
@@ -1194,7 +1240,7 @@
         return {
           ...modes.reward,
           title: `收下这张「${label}」`,
-          text: `这一轮盲盒结果已经生成。先保存「${label}」，再前往泡泡抽盒机官方入口。`
+          text: `这一轮盲盒结果已经生成。先保存「${label}」，再扫码关注泡泡玛特公众号。`
         };
       }
       return modes[mode];
@@ -1348,13 +1394,13 @@
       lastDrawnEnergy = energy;
       const label = getEnergyLabel(energy);
       rewardSheetTitle.textContent = `收下「${label}」这张能量卡`;
-      rewardSheetText.textContent = "这轮 AR 情绪盲盒已经完成。先保存你的结果，再继续前往泡泡抽盒机官方入口。";
+      rewardSheetText.textContent = "这轮 AR 情绪盲盒已经完成。先保存你的结果，再微信扫码关注泡泡玛特公众号。";
       rewardSheetEnergy.textContent = label;
       rewardSheetCopy.textContent = energy.text;
       rewardSheetAttitude.textContent = story
         ? `今日边界宣言：${story.quote}`
         : "今日边界宣言：先去“刺刺”点一条态度签，能让这轮开盒更完整。";
-      rewardEntryButton.textContent = "前往官方入口";
+      rewardEntryButton.textContent = "保存二维码";
       setRewardFeedback("");
       rewardSheet.hidden = false;
       document.body.classList.add("is-reward-open");
@@ -1407,11 +1453,17 @@
       setRewardFeedback("当前浏览器不支持一键分享，请直接截图保存当前结果页。");
     }
 
-    function enterPopmartBox() {
-      rewardEntryButton.textContent = "官方入口已点亮";
-      setRewardFeedback("这里预留给泡泡抽盒机小程序或活动页真实跳转。");
+    async function enterPopmartBox() {
+      const link = document.createElement("a");
+      link.href = popmartOfficialQrImage;
+      link.download = "popmart-wechat-official-account-qr.png";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      rewardEntryButton.textContent = "二维码已保存";
+      setRewardFeedback(`如果没有自动下载，也可以直接打开二维码：${popmartOfficialQrLink}`);
       window.setTimeout(() => {
-        rewardEntryButton.textContent = "前往官方入口";
+        rewardEntryButton.textContent = "保存二维码";
       }, 1600);
     }
 
