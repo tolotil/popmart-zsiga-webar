@@ -677,6 +677,10 @@
         -webkit-line-clamp: 2;
       }
 
+      body.is-story-mode:not(.has-story-pick) .result-panel > p {
+        -webkit-line-clamp: 1;
+      }
+
       .story-panel {
         margin-top: 8px;
         padding: 10px;
@@ -1161,7 +1165,13 @@
               ar: story.ar,
               front: story.front
             }
-          : modes.story;
+          : {
+              ...modes.story,
+              text: "先从下面三个态度里点一个，Zsiga 才会点亮你的刺刺结果。",
+              preview: "",
+              ar: "",
+              front: ""
+            };
       }
       if (mode === "main") {
         const main = lastOpenedMain || pickRandomMain();
@@ -1212,6 +1222,7 @@
     function applyModeData(mode, data) {
       currentMode = mode;
       document.body.classList.toggle("is-story-mode", mode === "story");
+      document.body.classList.toggle("has-story-pick", mode === "story" && Boolean(selectedStoryKey));
       updateActionRow(mode);
       buttons.forEach((button) => {
         const isMainClosedButton = mode === "mainClosed" && button.dataset.mode === "main";
@@ -1222,16 +1233,15 @@
         storyButtons.forEach((button) => {
           button.classList.toggle("is-picked", button.dataset.storyKey === selectedStoryKey);
         });
-        storyQuote.textContent = selectedStoryKey
-          ? `已点亮：${storyVariants[selectedStoryKey].quote}`
-          : "先点一条态度签，刺刺层才算真正被触发。";
+        storyQuote.hidden = !selectedStoryKey;
+        storyQuote.textContent = selectedStoryKey ? `已点亮：${storyVariants[selectedStoryKey].quote}` : "";
       }
       title.textContent = data.title;
       text.textContent = data.text;
       refreshPreviewObject(data.preview);
       const hideArContent = mode === "mainClosed";
       if (arBackPlane) {
-        if (hideArContent) {
+        if (hideArContent || !data.back) {
           arBackPlane.setAttribute("src", "");
           arBackPlane.setAttribute("material", "transparent: true; opacity: 0");
         } else {
@@ -1239,7 +1249,7 @@
         }
       }
       if (arPlane) {
-        if (hideArContent) {
+        if (hideArContent || !data.ar) {
           arPlane.setAttribute("src", "");
           arPlane.setAttribute("material", "transparent: true; opacity: 0");
         } else {
@@ -1247,7 +1257,7 @@
         }
       }
       if (arFrontPlane) {
-        if (hideArContent) {
+        if (hideArContent || !data.front) {
           arFrontPlane.setAttribute("src", "");
           arFrontPlane.setAttribute("material", "transparent: true; opacity: 0");
         } else {
