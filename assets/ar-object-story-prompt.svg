@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+  <defs>
+    <linearGradient id="paper" x1="140" y1="120" x2="760" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff8e9"/>
+      <stop offset="1" stop-color="#f6efe5"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="230" y1="620" x2="670" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff4775"/>
+      <stop offset="1" stop-color="#ffb15b"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="122" y="116" width="656" height="652" rx="46" fill="url(#paper)"/>
+    <rect x="122" y="116" width="656" height="652" rx="46" fill="none" stroke="#2d2522" stroke-width="8"/>
+  </g>
+  <rect x="166" y="156" width="164" height="52" rx="4" fill="#f20519"/>
+  <text x="248" y="191" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">POP MART</text>
+  <text x="166" y="262" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="54" font-weight="700" fill="#2d2522">先选一根刺</text>
+  <text x="166" y="320" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" font-weight="700" fill="#7f5537">让 Zsiga 替你说出今天的边界态度</text>
+  <path d="M180 402 L218 360 L256 402 L294 360 L332 402 L370 360 L408 402 L446 360 L484 402 L522 360 L560 402 L598 360 L636 402 L674 360 L712 402" fill="none" stroke="#2d2522" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="188" y="468" width="152" height="60" rx="30" fill="#2d2522"/>
+  <text x="264" y="507" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" font-weight="700" fill="#ffffff">让我慢热</text>
+  <rect x="374" y="468" width="152" height="60" rx="30" fill="#2d2522"/>
+  <text x="450" y="507" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" font-weight="700" fill="#ffffff">给我空间</text>
+  <rect x="560" y="468" width="152" height="60" rx="30" fill="#2d2522"/>
+  <text x="636" y="507" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" font-weight="700" fill="#ffffff">按我来</text>
+  <rect x="218" y="590" width="464" height="76" rx="38" fill="url(#warm)"/>
+  <text x="450" y="638" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="30" font-weight="700" fill="#ffffff">点击下方按钮，点亮你的刺刺结果</text>
+  <text x="450" y="714" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="24" fill="#64574f">未选择前，这里只是互动提示，不是默认结果</text>
+</svg>

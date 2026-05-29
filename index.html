@@ -746,6 +746,7 @@
       <img id="arMainOfficial06" src="./assets/openbox-results/06.png?v=20260529m" />
       <img id="arMainOfficial07" src="./assets/openbox-results/07.png?v=20260529m" />
       <img id="arStory" src="./assets/ar-object-story.svg?v=20260529e" />
+      <img id="arStoryPrompt" src="./assets/ar-object-story-prompt.svg?v=20260529a" />
       <img id="arStorySlow" src="./assets/ar-object-story-slow.svg?v=20260529g" />
       <img id="arStorySpace" src="./assets/ar-object-story-space.svg?v=20260529g" />
       <img id="arStoryOwn" src="./assets/ar-object-story-own.svg?v=20260529g" />
@@ -765,6 +766,7 @@
       <img id="arMainFront" src="./assets/ar-layer-main-front.svg?v=20260529e" />
       <img id="arStoryBack" src="./assets/ar-layer-story-back.svg?v=20260529e" />
       <img id="arStoryFront" src="./assets/ar-layer-story-front.svg?v=20260529h" />
+      <img id="arStoryPromptFront" src="./assets/ar-layer-story-front-prompt.svg?v=20260529a" />
       <img id="arStoryFrontSlow" src="./assets/ar-layer-story-front-slow.svg?v=20260529i" />
       <img id="arStoryFrontSpace" src="./assets/ar-layer-story-front-space.svg?v=20260529i" />
       <img id="arStoryFrontOwn" src="./assets/ar-layer-story-front-own.svg?v=20260529j" />
@@ -1168,9 +1170,9 @@
           : {
               ...modes.story,
               text: "先从下面三个态度里点一个，Zsiga 才会点亮你的刺刺结果。",
-              preview: "",
-              ar: "",
-              front: ""
+              preview: "./assets/ar-object-story-prompt.svg?v=20260529a",
+              ar: "#arStoryPrompt",
+              front: "#arStoryPromptFront"
             };
       }
       if (mode === "main") {
