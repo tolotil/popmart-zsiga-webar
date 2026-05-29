@@ -143,6 +143,9 @@
       right: 12px;
       top: calc(12px + env(safe-area-inset-top));
       z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 7px;
       max-width: 620px;
       margin: 0 auto;
       padding: 12px 14px;
@@ -156,11 +159,15 @@
 
     .status-dot {
       display: inline-block;
+      flex: 0 0 auto;
       width: 8px;
       height: 8px;
-      margin-right: 7px;
       border-radius: 50%;
       background: var(--yellow);
+    }
+
+    #statusText {
+      min-width: 0;
     }
 
     .status-dot.is-found {
@@ -355,6 +362,19 @@
 
     body:not(.has-real-ar) .ar-scene {
       display: none;
+    }
+
+    body.is-tracking-found .top-hint {
+      padding: 8px 10px;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    body.is-tracking-found #statusText {
+      display: -webkit-box;
+      overflow: hidden;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1;
     }
 
     .reward-sheet {
@@ -583,11 +603,105 @@
       }
 
       .story-buttons {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
       .sheet-actions {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px), (max-height: 760px) {
+      .top-hint {
+        left: 10px;
+        right: 10px;
+        top: calc(8px + env(safe-area-inset-top));
+        padding: 10px 12px;
+      }
+
+      body.is-tracking-found .top-hint {
+        max-height: 36px;
+      }
+
+      .control-panel {
+        left: 10px;
+        right: 10px;
+        bottom: calc(10px + env(safe-area-inset-bottom));
+        max-height: min(48svh, 390px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        padding: 8px;
+      }
+
+      .mode-buttons {
+        gap: 6px;
+      }
+
+      button {
+        min-height: 40px;
+      }
+
+      .result-panel {
+        margin-top: 8px;
+        padding: 10px;
+      }
+
+      .brand-lockup {
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .brand-lockup img {
+        width: 72px;
+      }
+
+      .brand-lockup span {
+        font-size: 10px;
+        letter-spacing: 0.06em;
+      }
+
+      .result-panel h1 {
+        margin-bottom: 4px;
+        font-size: 16px;
+      }
+
+      .result-panel p {
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      body.is-story-mode .result-panel > p {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .story-panel {
+        margin-top: 8px;
+        padding: 10px;
+      }
+
+      .story-panel__hint {
+        display: none;
+      }
+
+      .story-buttons {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 0;
+      }
+
+      .story-trigger {
+        min-height: 38px;
+        padding: 0 4px;
+        font-size: 12px;
+      }
+
+      .story-quote {
+        margin-top: 8px;
+        font-size: 12px;
+        line-height: 1.4;
       }
     }
   </style>
@@ -1097,6 +1211,7 @@
 
     function applyModeData(mode, data) {
       currentMode = mode;
+      document.body.classList.toggle("is-story-mode", mode === "story");
       updateActionRow(mode);
       buttons.forEach((button) => {
         const isMainClosedButton = mode === "mainClosed" && button.dataset.mode === "main";
@@ -1388,6 +1503,8 @@
     });
 
     function setTrackingStatus(status) {
+      document.body.classList.toggle("is-tracking-found", status === "found");
+      document.body.classList.toggle("is-tracking-lost", status === "lost");
       statusDot.classList.toggle("is-found", status === "found");
       statusDot.classList.toggle("is-lost", status === "lost");
       if (status === "ready") {
