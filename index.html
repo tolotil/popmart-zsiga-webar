@@ -752,14 +752,14 @@
   <div class="top-hint" id="hint">
     <span class="status-dot" id="statusDot"></span>
     <span id="statusText">当前是预览模式：先看清“AR 情绪盲盒怎么玩”。生成 <code>targets.mind</code> 后，这里会切换成真实摄像头识别。</span>
-    <a class="marker-link" href="./assets/marker-card.png" target="_blank" rel="noreferrer">打开官方识别海报</a>
+    <a class="marker-link" href="./assets/marker-card.png?v=20260530-qr" target="_blank" rel="noreferrer">打开官方识别海报</a>
   </div>
 
   <main class="preview-stage" aria-label="WebAR preview">
     <section class="camera-frame">
       <div class="fake-camera"></div>
       <div class="marker-preview">
-        <img src="./assets/marker-card.png?v=20260529a" alt="泡泡玛特 Zsiga 官方竖版识别海报" />
+        <img src="./assets/marker-card.png?v=20260530-qr" alt="泡泡玛特 Zsiga 官方竖版识别海报" />
         <span class="marker-preview-badge">正式识别图：泡泡玛特 Zsiga 官方竖版海报</span>
       </div>
       <img class="floating-ar is-hidden" id="previewObject" alt="AR content preview" />
@@ -1123,6 +1123,7 @@
     const arBackPlane = document.getElementById("arBackPlane");
     const arPlane = document.getElementById("arPlane");
     const arFrontPlane = document.getElementById("arFrontPlane");
+    const scene = document.querySelector(".ar-scene");
     const target = document.getElementById("target");
     const hint = document.getElementById("hint");
     const statusDot = document.getElementById("statusDot");
@@ -1591,6 +1592,13 @@
 
     target.addEventListener("targetFound", () => setTrackingStatus("found"));
     target.addEventListener("targetLost", () => setTrackingStatus("lost"));
+    scene?.addEventListener("arReady", () => {
+      statusText.textContent = "摄像头已启动，识别文件已进入 AR 流程。请对准带二维码的最终版识别海报。";
+    });
+    scene?.addEventListener("arError", (event) => {
+      console.error("MindAR arError", event);
+      statusText.textContent = "AR 启动失败：请换手机浏览器打开，并确认已允许摄像头权限。";
+    });
 
     fetch("./assets/targets.mind", { method: "HEAD" })
       .then((response) => {
@@ -1598,9 +1606,13 @@
           document.body.classList.add("has-real-ar");
           hint.querySelector(".marker-link")?.remove();
           setTrackingStatus("ready");
+        } else {
+          statusText.textContent = "识别文件没有加载成功：请检查 assets/targets.mind 是否已经部署上线。";
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        statusText.textContent = "识别文件请求失败：请检查当前网络或重新部署最新压缩包。";
+      });
 
     syncButtons();
     setMode("mainClosed");
