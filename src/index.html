@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#111111">
+
+    <title>AR 盲盒开盒互动</title>
+    <meta itemprop="name" content="AR 盲盒开盒互动">
+    <meta name="twitter:title" content="AR 盲盒开盒互动">
+    <meta property="og:title" content="AR 盲盒开盒互动">
+    <meta property="og:site_name" content="AR 盲盒开盒互动">
+    <meta name="description" content="在真实摄像头场景中放置 3D 盲盒，撕开拉条，随机抽取角色小卡并合影。">
+    <meta itemprop="description" content="在真实摄像头场景中放置 3D 盲盒，撕开拉条，随机抽取角色小卡并合影。">
+    <meta property="og:description" content="在真实摄像头场景中放置 3D 盲盒，撕开拉条，随机抽取角色小卡并合影。">
+    <meta name="twitter:description" content="在真实摄像头场景中放置 3D 盲盒，撕开拉条，随机抽取角色小卡并合影。">
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js"
+      async
+      crossorigin="anonymous"
+      data-preload-chunks="slam">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <section id="entry-cover" class="entry-cover" aria-live="polite">
+      <img class="brand-logo entry-brand-logo" src="assets/ui/popmart-logo.png" alt="POP MART">
+      <div class="entry-copy">
+        <p class="entry-kicker">Angry Molly 线上体验馆</p>
+        <h1>欢迎来到 Angry Molly 盲盒线上体验馆</h1>
+        <p>请选择你要体验的项目</p>
+      </div>
+
+      <div class="entry-actions" aria-label="体验项目">
+        <button id="entry-box-button" class="entry-action entry-action--box" type="button">
+          <span>抽盒体验</span>
+        </button>
+        <button id="entry-doodle-button" class="entry-action entry-action--doodle" type="button">
+          <span>涂鸦体验</span>
+        </button>
+      </div>
+
+      <div id="entry-confirm" class="entry-confirm is-hidden" role="dialog" aria-modal="false">
+        <button id="entry-close-button" class="entry-confirm__close" type="button" aria-label="关闭">×</button>
+        <p id="entry-confirm-text"></p>
+        <div class="entry-confirm__actions">
+          <button id="entry-confirm-button" type="button">确认进入</button>
+          <button id="entry-cancel-button" type="button">再想想</button>
+        </div>
+      </div>
+
+      <button id="entry-buy-button" class="entry-buy-link" type="button">
+        购入 Angry Molly 盲盒
+      </button>
+    </section>
+
+    <canvas id="camerafeed"></canvas>
+
+    <main id="ar-hud" class="hud" aria-live="polite">
+      <p id="ar-hint" class="hint">对准桌面中心，点击获取盲盒</p>
+
+      <button id="grab-button" class="grab-button" type="button" aria-label="获取盲盒">
+        <span class="grab-button__ring" aria-hidden="true"></span>
+        <span class="grab-button__text">获取盲盒</span>
+      </button>
+
+      <button id="photo-button" class="photo-button is-hidden" type="button">
+        与抽到的角色合影
+      </button>
+
+      <button id="reset-button" class="reset-button is-hidden" type="button" aria-label="重新放置">
+        重新放置
+      </button>
+    </main>
+
+    <section id="photo-page" class="photo-page is-hidden" aria-hidden="true">
+      <div id="photo-stage" class="photo-stage">
+        <video id="photo-video" class="photo-video" autoplay muted playsinline></video>
+        <canvas id="photo-character" class="photo-character" width="420" height="560"></canvas>
+        <img id="photo-brand-logo" class="photo-brand-logo" src="assets/ui/popmart-logo.png" alt="POP MART" decoding="async">
+        <img id="photo-frame" class="photo-frame" src="assets/ui/photo-frame.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+        <img id="photo-result" class="photo-result is-hidden" alt="合影结果">
+      </div>
+
+      <div class="photo-topbar">
+        <p id="photo-hint" class="photo-hint">拖动角色调整位置，点合影留念固定画面</p>
+        <button id="switch-camera-button" class="switch-camera-button" type="button" aria-label="切换摄像头">
+          <img class="camera-switch-glyph" src="assets/ui/camera-switch.png" alt="" aria-hidden="true" decoding="async">
+        </button>
+      </div>
+
+      <div class="photo-bottombar">
+        <button id="capture-photo-button" class="primary-action" type="button">合影留念</button>
+        <button id="share-photo-button" class="is-hidden" type="button">保存</button>
+        <button id="buy-button" class="is-hidden" type="button">购入盲盒</button>
+        <button id="photo-doodle-button" class="is-hidden" type="button">涂鸦体验</button>
+      </div>
+    </section>
+
+    <section id="doodle-page" class="doodle-page is-hidden" aria-hidden="true">
+      <div class="doodle-board">
+        <p class="doodle-kicker">Lucky Color Studio</p>
+        <h2>设计专属于你的幸运色 Angry Molly</h2>
+        <p id="doodle-hint" class="doodle-hint">拖色点到灰色区域上色</p>
+
+        <div id="doodle-stage" class="doodle-stage">
+          <canvas id="doodle-canvas" class="doodle-canvas" aria-label="Angry Molly 涂鸦底稿"></canvas>
+        </div>
+
+        <div id="doodle-palette" class="doodle-palette" aria-label="涂鸦颜色">
+          <button type="button" class="doodle-color" data-color="#ff4f5e" style="--paint-color: #ff4f5e" aria-label="红色"></button>
+          <button type="button" class="doodle-color" data-color="#ff9f1c" style="--paint-color: #ff9f1c" aria-label="橙色"></button>
+          <button type="button" class="doodle-color" data-color="#ffe156" style="--paint-color: #ffe156" aria-label="黄色"></button>
+          <button type="button" class="doodle-color" data-color="#2ecb70" style="--paint-color: #2ecb70" aria-label="绿色"></button>
+          <button type="button" class="doodle-color" data-color="#3cb7ff" style="--paint-color: #3cb7ff" aria-label="蓝色"></button>
+          <button type="button" class="doodle-color" data-color="#7864ff" style="--paint-color: #7864ff" aria-label="紫色"></button>
+          <button type="button" class="doodle-color" data-color="#ff74d4" style="--paint-color: #ff74d4" aria-label="粉色"></button>
+        </div>
+
+        <div class="doodle-confirm-bar">
+          <button id="doodle-confirm-button" class="primary-action" type="button" disabled>确定选择</button>
+        </div>
+
+        <div id="doodle-name-dialog" class="doodle-name-dialog is-hidden" role="dialog" aria-modal="true" aria-labelledby="doodle-name-title">
+          <div class="doodle-name-card">
+            <h3 id="doodle-name-title">给你的 Angry Molly 起个名字</h3>
+            <input id="doodle-name-input" type="text" maxlength="12" placeholder="例如：今日小火苗">
+            <div class="doodle-name-actions">
+              <button id="doodle-name-cancel" type="button">取消</button>
+              <button id="doodle-name-confirm" class="primary-action" type="button">确认生成</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="doodle-result-page" class="doodle-result-page is-hidden" aria-hidden="true">
+      <div class="doodle-result">
+        <p class="doodle-kicker">Lucky Color Studio</p>
+        <h2>你的今日幸运色正在生成</h2>
+
+        <div id="doodle-meaning-list" class="doodle-meaning-list" aria-live="polite"></div>
+
+        <div id="doodle-loading" class="doodle-loading is-hidden" aria-hidden="true">
+          <span></span>
+        </div>
+
+        <div id="doodle-card-wrap" class="doodle-card-wrap is-hidden">
+          <img id="doodle-card-image" class="doodle-card-image" alt="自制 Angry Molly 幸运色小卡">
+          <canvas id="doodle-card-canvas" class="is-hidden" width="900" height="1320"></canvas>
+        </div>
+
+        <div class="doodle-result-actions">
+          <button id="doodle-edit-button" class="is-hidden" type="button">重新涂鸦</button>
+          <button id="doodle-share-button" class="primary-action is-hidden" type="button">保存小卡</button>
+          <button id="doodle-save-button" class="is-hidden" type="button">购买盲盒</button>
+          <button id="doodle-to-box-button" class="is-hidden" type="button">抽盒体验</button>
+        </div>
+      </div>
+    </section>
+
+    <div id="purchase-modal" class="purchase-modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="purchase-modal-title">
+      <div class="purchase-card">
+        <button id="purchase-close-button" class="purchase-close-button" type="button" aria-label="关闭">×</button>
+        <h2 id="purchase-modal-title">微信扫码购入盲盒</h2>
+        <img id="purchase-code-image" class="purchase-code-image" src="assets/ui/mini-program-code.png" alt="泡泡玛特小程序码" decoding="async">
+        <p>长按保存图片，微信扫码进入小程序</p>
+        <a class="purchase-official-link" href="https://www.popmart.com.cn/home" target="_blank" rel="noopener">点此进入泡泡玛特官网</a>
+      </div>
+    </div>
+
+    <script src="bundle.js"></script>
+  </body>
+</html>

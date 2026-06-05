@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
-  <rect x="182" y="134" width="214" height="62" rx="31" fill="#2d2522"/>
-  <text x="289" y="175" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" font-weight="700" fill="#ffffff">不照抄</text>
-  <rect x="448" y="134" width="214" height="62" rx="31" fill="#ff8da1"/>
-  <text x="555" y="175" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="28" font-weight="700" fill="#41252e">按我来</text>
-  <rect x="182" y="614" width="536" height="58" rx="29" fill="#ffe9ef" stroke="#ce6b81" stroke-width="4"/>
-  <text x="450" y="652" text-anchor="middle" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#482b34">我可以不一样，但我还是我</text>
-</svg>

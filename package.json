@@ -1,0 +1,21 @@
+{
+  "name": "blindbox-8thwall-openbox",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node ./node_modules/webpack/bin/webpack.js --config config/webpack.config.js",
+    "serve": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --mode=development --config config/webpack.config.js"
+  },
+  "dependencies": {
+    "@8thwall/ecs": "^3.1.0",
+    "@8thwall/engine-binary": "^1.0.0",
+    "three": "^0.183.2"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^13.0.1",
+    "html-webpack-plugin": "^5.6.5",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}

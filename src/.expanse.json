@@ -1,0 +1,45 @@
+{
+  "objects": {
+    "b3ad3e68-60c0-4dc8-b7c8-5663df6f9779": {
+      "camera": {
+        "type": "perspective",
+        "xr": {
+          "desktop": "3D",
+          "xrCameraType": "3dOnly",
+          "headset": "disabled"
+        }
+      },
+      "components": {},
+      "geometry": null,
+      "id": "b3ad3e68-60c0-4dc8-b7c8-5663df6f9779",
+      "material": null,
+      "name": "Camera",
+      "position": [
+        0,
+        2,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "parentId": "c3a1f5fe-b6ea-4dac-a7f5-6786f6adbc7c",
+      "order": 0
+    }
+  },
+  "spaces": {
+    "c3a1f5fe-b6ea-4dac-a7f5-6786f6adbc7c": {
+      "id": "c3a1f5fe-b6ea-4dac-a7f5-6786f6adbc7c",
+      "name": "Default Space",
+      "activeCamera": "b3ad3e68-60c0-4dc8-b7c8-5663df6f9779"
+    }
+  },
+  "entrySpaceId": "c3a1f5fe-b6ea-4dac-a7f5-6786f6adbc7c"
+}
